@@ -20,7 +20,7 @@
 
   <script>
   $(document).ready(function(){
-    const searchCustomer = "http://localhost:8030/api/customer/search-customer?id="
+    const searchCustomer = "https://eticket-backend.herokuapp.com/customer/search-customer?id="
     $("#cust").click(function(event){
       $.get(searchCustomer+$("#customer").val()).done(
         function (results){
@@ -53,7 +53,7 @@
 
   <script>
     $(document).ready(function(){
-      const searchTicket = "http://localhost:8030/api/ticket/search-ticket?id="
+      const searchTicket = "https://eticket-backend.herokuapp.com/ticket/search-ticket?id="
       $("#ticketSearch").click(function(event){
         $.get(searchTicket+$("#film").val()).done(
           function (data){
@@ -86,7 +86,7 @@
 
   <script>
     $(document).ready(function(){
-      const summary = "http://localhost:8030/api/summary/"
+      const summary = "https://eticket-backend.herokuapp.com/api/summary/"
         $.get(summary).done(
           function (data){
             $('#totalCustomer').html(data.result.totalCustomer)
@@ -99,7 +99,7 @@
 
   <script>
     $(document).ready(function(){
-      const addOrder = "http://localhost:8030/api/order/add"
+      const addOrder = "https://eticket-backend.herokuapp.com/api/order/add"
 
       $("#order").click(function(event){
 
@@ -133,7 +133,7 @@
               $("#time").val("");
               $("#buy").val("");
 
-              const summary = "http://localhost:8030/api/summary/"
+              const summary = "https://eticket-backend.herokuapp.com/api/summary/"
               $.get(summary).done(
                 function (data){
                   $('#totalCustomer').html(data.result.totalCustomer)
