@@ -20,7 +20,7 @@
 
   <script>
   $(document).ready(function(){
-    const searchCustomer = "https://eticket-backend.herokuapp.com/customer/search-customer?id="
+    const searchCustomer = "https://eticket-backend.herokuapp.com/api/customer/search-customer?id="
     $("#cust").click(function(event){
       $.get(searchCustomer+$("#customer").val()).done(
         function (results){
@@ -53,7 +53,7 @@
 
   <script>
     $(document).ready(function(){
-      const searchTicket = "https://eticket-backend.herokuapp.com/ticket/search-ticket?id="
+      const searchTicket = "https://eticket-backend.herokuapp.com/api/ticket/search-ticket?id="
       $("#ticketSearch").click(function(event){
         $.get(searchTicket+$("#film").val()).done(
           function (data){
