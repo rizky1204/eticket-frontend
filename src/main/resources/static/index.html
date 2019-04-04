@@ -28,6 +28,7 @@
           if(results.response == "ERROR"){
             $('#myModal').modal('show');
             $('#modalText').html(results.result)
+            clearFieldCustomer()
           }else(
             consumeCustomer(results)
           )
@@ -36,10 +37,17 @@
   });
 
   function consumeCustomer(results){
-        $("#customer").val(results.result.customerID);
+          $("#customer").val(results.result.customerID);
           $("#name").val(results.result.name);
           $("#phone").val(results.result.phone);
           $("#email").val(results.result.email);
+  }
+
+  function clearFieldCustomer(){
+          $("#customer").val("");
+          $("#name").val("");
+          $("#phone").val("");
+          $("#email").val("");
   }
 </script>
 
@@ -50,8 +58,9 @@
         $.get(searchTicket+$("#film").val()).done(
           function (data){
             if(data.response == "ERROR"){
-              $('#myModal').modal('show');
+              $('#myModal').modal('show')
               $('#modalText').html(data.result)
+              clearFieldTicket()
             }else{
               consumeTicket(data)
             }
@@ -62,9 +71,16 @@
 
     function consumeTicket(data){
           var timeResult = data.result.startTime + " - " + data.result.finishTime
-            $("#film").val(data.result.film);
-            $("#ticketId").val(data.result.ticketId);
-            $("#time").val(timeResult);
+            $("#film").val(data.result.film)
+            $("#ticketId").val(data.result.ticketId)
+            $("#time").val(timeResult)
+    }
+
+    function clearFieldTicket(){
+            $("#film").val("")
+            $("#ticketId").val("")
+            $("#time").val("")
+            $("#buy").val("")
     }
 </script>
 
