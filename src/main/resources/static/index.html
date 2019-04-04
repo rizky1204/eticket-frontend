@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>E-ticket</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- <script src="js/jquery.min.js"></script> -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+
+  <script>
+  $(document).ready(function(){
+    const searchCustomer = "http://localhost:8030/api/customer/search-customer?id="
+    $("#cust").click(function(event){
+      $.get(searchCustomer+$("#customer").val()).done(
+        function (results){
+
+          if(results.response == "ERROR"){
+            $('#myModal').modal('show');
+            $('#modalText').html(results.result)
+          }else(
+            consumeCustomer(results)
+          )
+        }.bind())
+    })
+  });
+
+  function consumeCustomer(results){
+        $("#customer").val(results.result.customerID);
+          $("#name").val(results.result.name);
+          $("#phone").val(results.result.phone);
+          $("#email").val(results.result.email);
+  }
+</script>
+
+  <script>
+    $(document).ready(function(){
+      const searchTicket = "http://localhost:8030/api/ticket/search-ticket?id="
+      $("#ticketSearch").click(function(event){
+        $.get(searchTicket+$("#film").val()).done(
+          function (data){
+            if(data.response == "ERROR"){
+              $('#myModal').modal('show');
+              $('#modalText').html(data.result)
+            }else{
+              consumeTicket(data)
+            }
+
+          }.bind())
+      })
+    });
+
+    function consumeTicket(data){
+          var timeResult = data.result.startTime + " - " + data.result.finishTime
+            $("#film").val(data.result.film);
+            $("#ticketId").val(data.result.ticketId);
+            $("#time").val(timeResult);
+    }
+</script>
+
+  <script>
+    $(document).ready(function(){
+      const summary = "http://localhost:8030/api/summary/"
+        $.get(summary).done(
+          function (data){
+            $('#totalCustomer').html(data.result.totalCustomer)
+            $('#totalOrder').html(data.result.totalOrders)
+            $('#totalTicket').html(data.result.totalTicket)
+          }.bind())
+
+    });
+</script>
+
+  <script>
+    $(document).ready(function(){
+      const addOrder = "http://localhost:8030/api/order/add"
+
+      $("#order").click(function(event){
+
+      var data = {
+        customerId:$("#customer").val(),
+        ticketId : $("#ticketId").val(),
+        buy : $("#buy").val()
+      }
+
+      var dataJson = JSON.stringify(data)
+
+      $.ajax({
+        url:addOrder,
+        type : "POST",
+        data : dataJson,
+        contentType:"application/json",
+        success : function(response){
+            if(response.response == "ERROR"){
+              $('#myModal').modal('show');
+              $('#modalText').html(response.result)
+            }else{
+
+              $('#myModal').modal('show');
+              $('#modalText').html("Order successfully , "+ "Your order Id = "+response.result.orderId)
+              $("#customer").val("");
+              $("#name").val("");
+              $("#phone").val("");
+              $("#email").val("");
+              $("#film").val("");
+              $("#ticketId").val("");
+              $("#time").val("");
+              $("#buy").val("");
+
+              const summary = "http://localhost:8030/api/summary/"
+              $.get(summary).done(
+                function (data){
+                  $('#totalCustomer').html(data.result.totalCustomer)
+                  $('#totalOrder').html(data.result.totalOrders)
+                  $('#totalTicket').html(data.result.totalTicket)
+                    }.bind())
+              }
+        }
+      })
+    })
+  })
+</script>
+
+
+  <!-- Custom styles for this template-->
+  <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+  <!-- Sidebar -->
+  <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+      <div class="sidebar-brand-icon rotate-n-15">
+        <i class="fas fa-laugh-wink"></i>
+      </div>
+      <div class="sidebar-brand-text mx-3">E-ticket</div>
+    </a>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+
+
+
+  </ul>
+  <!-- End of Sidebar -->
+
+  <!-- Content Wrapper -->
+  <div id="content-wrapper" class="d-flex flex-column">
+
+    <!-- Main Content -->
+    <div id="content">
+
+      <!-- Topbar -->
+      <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+        <!-- Sidebar Toggle (Topbar) -->
+        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+          <i class="fa fa-bars"></i>
+        </button>
+
+        <!-- Topbar Search -->
+
+
+        <!-- Topbar Navbar -->
+        <ul class="navbar-nav ml-auto">
+
+          <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+        </ul>
+          <!-- Nav Item - Alerts -->
+      </nav>
+      <!-- End of Topbar -->
+      <!-- Begin Page Content -->
+      <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="row">
+
+          <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Customer</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"><a id="totalCustomer"></a></div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Earnings (Monthly) Card Example -->
+          <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Order</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"><a id="totalOrder"></a></div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Earnings (Monthly) Card Example -->
+          <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Ticket</div>
+                    <div class="row no-gutters align-items-center">
+                      <div class="col-auto">
+                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><a id="totalTicket"> </a></div>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-12">
+            <div class="p-5">
+              <!-- <div class="text-center">
+                <h1 class="h4 text-gray-900 mb-4">Order Ticket</h1>
+              </div> -->
+              <form class="user">
+                <div class="form-group row">
+                  <div class="col-sm-4 mb-3 mb-sm-0">
+                    <input type="text" class="form-control form-control-user" id="customer" placeholder="Customer id">
+                  </div>
+                  <div class="col-sm-2 mb-3 mb-sm-0">
+                    <button  id="cust" type="button" class="btn btn-primary btn-user btn-block">
+                      Search Customer
+                    </button>
+                  </div>
+                  <div class="col-sm-4">
+                    <input type="text" class="form-control form-control-user" id="film" placeholder="Film">
+                  </div>
+                  <div class="col-sm-2 mb-3 mb-sm-0">
+                    <button href="login.html"  id="ticketSearch" type="button"  class="btn btn-danger btn-user btn-block">
+                      Search Film
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    <input type="text"  class="form-control form-control-user" id="name" placeholder="Name">
+                  </div>
+                  <div class="col-sm-6">
+                    <input type="text"  class="form-control form-control-user" id="ticketId" placeholder="Film Name">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    <input type="text" class="form-control form-control-user" id="phone" placeholder="Phone">
+                  </div>
+                  <div class="col-sm-6">
+                    <input type="text" class="form-control form-control-user" id="time" placeholder="Time">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    <input type="text" class="form-control form-control-user" id="email" placeholder="Email">
+                  </div>
+                  <div class="col-sm-6">
+                    <input type="text" class="form-control form-control-user" id="buy" placeholder="Buy">
+                  </div>
+                </div>
+                <div class="col-sm-2 mb-3 mb-sm-9">
+                  <button href="login.html"  id="order" type="button"  class="btn btn-info btn-user btn-block">
+                    Order
+                  </button>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" role="dialog">
+          <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-body">
+                <div class="alert alert-danger" role="alert">
+                  <a id="modalText"></a>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+    </div>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+
+  <!-- Custom scripts for all pages-->
+  <script src="js/sb-admin-2.min.js"></script>
+
+</body>
+
+</html>
